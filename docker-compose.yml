@@ -1,43 +1,23 @@
 version: "3.6"
 services:
-  #PHP Service
+  #Centos, PHP, Nginx
   app:
     build:
       context: .
-      dockerfile: Dockerfile
-    container_name: app
-    restart: unless-stopped
+      dockerfile: ./Dockerfile
     tty: true
     environment:
       SERVICE_NAME: app
       SERVICE_TAGS: dev
-    working_dir: /var/www
-    volumes:
-      - ../hobbyproject:/var/www
-      - ./php/conf/php.ini:/usr/local/etc/php/conf.d/php.ini
-    networks:
-      - app-network
-
-  #Nginx Service
-  webserver:
-    image: nginx:alpine
-    container_name: webserver
-    restart: unless-stopped
-    tty: true
     ports:
       - "80:80"
       - "443:443"
     volumes:
-      - ./:/var/www
-      - ./nginx/conf.d/:/etc/nginx/conf.d/
-    networks:
-      - app-network
+      - ../hobbyproject:/var/www/hobbyproject/
 
   #MySQL Service
   db:
     image: mysql:5.7.22
-    container_name: db
-    restart: unless-stopped
     tty: true
     ports:
       - "3306:3306"
@@ -48,14 +28,7 @@ services:
       SERVICE_NAME: mysql
     volumes:
       - dbdata:/var/lib/mysql/
-      - ./mysql/my.cnf:/etc/mysql/my.cnf
-    networks:
-      - app-network
-
-#Docker Networks
-networks:
-  app-network:
-    driver: bridge
+      - ./images/mysql/conf/my.cnf:/etc/mysql/my.cnf
 
 #Volumes
 volumes:
